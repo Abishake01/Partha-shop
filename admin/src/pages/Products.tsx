@@ -246,16 +246,21 @@ export default function Products() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                   <div className="flex gap-2">
                     <select
-                      value={formData.categoryId}
+                      value={formData.categoryId || ''}
                       onChange={(e) => {
                         if (e.target.value === 'new') {
                           setShowCategoryForm(true);
+                          // Reset to empty so it doesn't show "new" as selected
+                          setTimeout(() => {
+                            const select = e.target as HTMLSelectElement;
+                            select.value = formData.categoryId || '';
+                          }, 0);
                         } else {
                           setFormData({ ...formData, categoryId: e.target.value });
                         }
                       }}
                       className="input flex-1"
-                      required
+                      required={!showCategoryForm}
                     >
                       <option value="">Select Category</option>
                       {categories?.map((cat: any) => (
@@ -272,16 +277,21 @@ export default function Products() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
                 <div className="flex gap-2">
                   <select
-                    value={formData.brandId}
+                    value={formData.brandId || ''}
                     onChange={(e) => {
                       if (e.target.value === 'new') {
                         setShowBrandForm(true);
+                        // Reset to empty so it doesn't show "new" as selected
+                        setTimeout(() => {
+                          const select = e.target as HTMLSelectElement;
+                          select.value = formData.brandId || '';
+                        }, 0);
                       } else {
                         setFormData({ ...formData, brandId: e.target.value });
                       }
                     }}
                     className="input flex-1"
-                    required
+                    required={!showBrandForm}
                   >
                     <option value="">Select Brand</option>
                     {brands?.map((brand: any) => (
@@ -320,6 +330,158 @@ export default function Products() {
                     setShowForm(false);
                     setEditingProduct(null);
                     resetForm();
+                  }}
+                  className="btn-secondary"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Category Modal */}
+      {showCategoryForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+            <button
+              onClick={() => {
+                setShowCategoryForm(false);
+                setNewCategory({ name: '', description: '', image: '' });
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <FiX className="w-6 h-6" />
+            </button>
+            <h3 className="text-xl font-bold mb-4 pr-8">Create New Category</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                createCategoryMutation.mutate(newCategory);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category Name *</label>
+                <input
+                  type="text"
+                  value={newCategory.name}
+                  onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+                  className="input"
+                  required
+                  placeholder="e.g., Smartphones"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={newCategory.description}
+                  onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
+                  className="input"
+                  rows={3}
+                  placeholder="Category description (optional)"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                <input
+                  type="url"
+                  value={newCategory.image}
+                  onChange={(e) => setNewCategory({ ...newCategory, image: e.target.value })}
+                  className="input"
+                  placeholder="https://example.com/image.jpg (optional)"
+                />
+              </div>
+              <div className="flex space-x-4">
+                <button
+                  type="submit"
+                  className="btn-primary flex-1"
+                  disabled={createCategoryMutation.isLoading}
+                >
+                  {createCategoryMutation.isLoading ? 'Creating...' : 'Create Category'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCategoryForm(false);
+                    setNewCategory({ name: '', description: '', image: '' });
+                  }}
+                  className="btn-secondary"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Brand Modal */}
+      {showBrandForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+            <button
+              onClick={() => {
+                setShowBrandForm(false);
+                setNewBrand({ name: '', description: '', image: '' });
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <FiX className="w-6 h-6" />
+            </button>
+            <h3 className="text-xl font-bold mb-4 pr-8">Create New Brand</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                createBrandMutation.mutate(newBrand);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Brand Name *</label>
+                <input
+                  type="text"
+                  value={newBrand.name}
+                  onChange={(e) => setNewBrand({ ...newBrand, name: e.target.value })}
+                  className="input"
+                  required
+                  placeholder="e.g., Apple"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={newBrand.description}
+                  onChange={(e) => setNewBrand({ ...newBrand, description: e.target.value })}
+                  className="input"
+                  rows={3}
+                  placeholder="Brand description (optional)"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                <input
+                  type="url"
+                  value={newBrand.image}
+                  onChange={(e) => setNewBrand({ ...newBrand, image: e.target.value })}
+                  className="input"
+                  placeholder="https://example.com/image.jpg (optional)"
+                />
+              </div>
+              <div className="flex space-x-4">
+                <button
+                  type="submit"
+                  className="btn-primary flex-1"
+                  disabled={createBrandMutation.isLoading}
+                >
+                  {createBrandMutation.isLoading ? 'Creating...' : 'Create Brand'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowBrandForm(false);
+                    setNewBrand({ name: '', description: '', image: '' });
                   }}
                   className="btn-secondary"
                 >
