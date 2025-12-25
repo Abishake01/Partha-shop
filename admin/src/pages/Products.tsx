@@ -39,6 +39,38 @@ export default function Products() {
     select: (res) => res.data.data,
   });
 
+  const createCategoryMutation = useMutation(
+    (data: typeof newCategory) => categoryApi.createCategory(data),
+    {
+      onSuccess: (response) => {
+        queryClient.invalidateQueries('categories');
+        setFormData({ ...formData, categoryId: response.data.data.id });
+        setShowCategoryForm(false);
+        setNewCategory({ name: '', description: '', image: '' });
+        toast.success('Category created and selected');
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to create category');
+      },
+    }
+  );
+
+  const createBrandMutation = useMutation(
+    (data: typeof newBrand) => brandApi.createBrand(data),
+    {
+      onSuccess: (response) => {
+        queryClient.invalidateQueries('brands');
+        setFormData({ ...formData, brandId: response.data.data.id });
+        setShowBrandForm(false);
+        setNewBrand({ name: '', description: '', image: '' });
+        toast.success('Brand created and selected');
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to create brand');
+      },
+    }
+  );
+
   const deleteMutation = useMutation((id: string) => productApi.deleteProduct(id), {
     onSuccess: () => {
       queryClient.invalidateQueries('admin-products');
@@ -141,8 +173,18 @@ export default function Products() {
 
       {showForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+            <button
+              onClick={() => {
+                setShowForm(false);
+                setEditingProduct(null);
+                resetForm();
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <FiX className="w-6 h-6" />
+            </button>
+            <h2 className="text-2xl font-bold mb-4 pr-8">
               {editingProduct ? 'Edit Product' : 'Add Product'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -202,36 +244,54 @@ export default function Products() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                  <select
-                    value={formData.categoryId}
-                    onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                    className="input"
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories?.map((cat: any) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex gap-2">
+                    <select
+                      value={formData.categoryId}
+                      onChange={(e) => {
+                        if (e.target.value === 'new') {
+                          setShowCategoryForm(true);
+                        } else {
+                          setFormData({ ...formData, categoryId: e.target.value });
+                        }
+                      }}
+                      className="input flex-1"
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      {categories?.map((cat: any) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                      <option value="new">+ Create New Category</option>
+                    </select>
+                  </div>
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
-                <select
-                  value={formData.brandId}
-                  onChange={(e) => setFormData({ ...formData, brandId: e.target.value })}
-                  className="input"
-                  required
-                >
-                  <option value="">Select Brand</option>
-                  {brands?.map((brand: any) => (
-                    <option key={brand.id} value={brand.id}>
-                      {brand.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex gap-2">
+                  <select
+                    value={formData.brandId}
+                    onChange={(e) => {
+                      if (e.target.value === 'new') {
+                        setShowBrandForm(true);
+                      } else {
+                        setFormData({ ...formData, brandId: e.target.value });
+                      }
+                    }}
+                    className="input flex-1"
+                    required
+                  >
+                    <option value="">Select Brand</option>
+                    {brands?.map((brand: any) => (
+                      <option key={brand.id} value={brand.id}>
+                        {brand.name}
+                      </option>
+                    ))}
+                    <option value="new">+ Create New Brand</option>
+                  </select>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
