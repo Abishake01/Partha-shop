@@ -28,6 +28,11 @@ export default function ProductDetails() {
 
   const product = productData?.product || productData;
   const relatedProducts = productData?.relatedProducts || [];
+  
+  // Ensure product exists before accessing properties
+  if (!product && !isLoading) {
+    return <div className="text-center py-12">Product not found</div>;
+  }
 
   const handleAddToCart = async () => {
     if (!isAuthenticated()) {
