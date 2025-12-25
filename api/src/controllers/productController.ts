@@ -181,6 +181,30 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
       brandId,
     } = req.body;
 
+    // Handle file uploads
+    let imageUrls: string[] = [];
+    
+    // Process uploaded files
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+      const uploadPromises = (req.files as Express.Multer.File[]).map((file) =>
+        uploadToCloudinary(file, 'mobileshop/products')
+      );
+      const uploadResults = await Promise.all(uploadPromises);
+      imageUrls = uploadResults.map((result) => result.secure_url);
+    }
+
+    // Add URL images if provided
+    if (images) {
+      const urlImages = typeof images === 'string' ? JSON.parse(images) : images;
+      imageUrls = [...imageUrls, ...urlImages];
+    }
+
+    // Parse specifications
+    let specs = {};
+    if (specifications) {
+      specs = typeof specifications === 'string' ? JSON.parse(specifications) : specifications;
+    }
+
     // Generate slug
     const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
@@ -192,8 +216,8 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
         price: parseFloat(price),
         discountPrice: discountPrice ? parseFloat(discountPrice) : null,
         stock: parseInt(stock),
-        images: JSON.stringify(images || []),
-        specifications: specifications || {},
+        images: JSON.stringify(imageUrls),
+        specifications: specs,
         categoryId,
         brandId,
       },
