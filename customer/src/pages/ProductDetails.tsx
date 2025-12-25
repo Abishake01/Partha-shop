@@ -150,8 +150,8 @@ export default function ProductDetails() {
               )}
             </div>
             <p className="text-sm text-gray-600">
-              {productData.stock > 0 ? (
-                <span className="text-green-600 font-medium">In Stock ({productData.stock} available)</span>
+              {product.stock > 0 ? (
+                <span className="text-green-600 font-medium">In Stock ({product.stock} available)</span>
               ) : (
                 <span className="text-red-600 font-medium">Out of Stock</span>
               )}
@@ -159,7 +159,7 @@ export default function ProductDetails() {
           </div>
 
           {/* Quantity Selector */}
-          {productData.stock > 0 && (
+          {product.stock > 0 && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
               <div className="flex items-center space-x-4">
@@ -172,14 +172,14 @@ export default function ProductDetails() {
                   </button>
                   <span className="px-4 py-2 border-x border-gray-300">{quantity}</span>
                   <button
-                    onClick={() => setQuantity(Math.min(productData.stock, quantity + 1))}
+                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                     className="px-4 py-2 hover:bg-gray-100"
                   >
                     +
                   </button>
                 </div>
                 <span className="text-sm text-gray-600">
-                  Max: {productData.stock}
+                  Max: {product.stock}
                 </span>
               </div>
             </div>
@@ -189,7 +189,7 @@ export default function ProductDetails() {
           <div className="flex space-x-4 mb-8">
             <button
               onClick={handleAddToCart}
-              disabled={productData.stock === 0}
+              disabled={product.stock === 0}
               className="flex-1 btn-primary flex items-center justify-center space-x-2 disabled:opacity-50"
             >
               <FiShoppingCart />
@@ -206,18 +206,18 @@ export default function ProductDetails() {
           {/* Description */}
           <div className="border-t pt-6">
             <h2 className="text-xl font-semibold mb-4">Description</h2>
-            <p className="text-gray-700 whitespace-pre-line">{productData.description}</p>
+            <p className="text-gray-700 whitespace-pre-line">{product.description}</p>
           </div>
 
           {/* Specifications */}
-          {productData.specifications && (
+          {product.specifications && (
             <div className="border-t pt-6 mt-6">
               <h2 className="text-xl font-semibold mb-4">Specifications</h2>
               <dl className="grid grid-cols-2 gap-4">
-                {Object.entries(productData.specifications).map(([key, value]) => (
-                  <div key={key}>
+                {Object.entries(product.specifications).map(([key, value]) => (
+                  <div key={key} className="border-b border-gray-100 pb-2">
                     <dt className="text-sm font-medium text-gray-500">{key}</dt>
-                    <dd className="text-sm text-gray-900">{String(value)}</dd>
+                    <dd className="text-sm text-gray-900 mt-1">{String(value)}</dd>
                   </div>
                 ))}
               </dl>
@@ -225,6 +225,27 @@ export default function ProductDetails() {
           )}
         </div>
       </div>
+
+      {/* Related Products */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-16 border-t pt-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Related Products</h2>
+            <button
+              onClick={() => navigate(`/products?category=${product.categoryId}`)}
+              className="text-primary-600 hover:text-primary-700 font-medium flex items-center gap-2"
+            >
+              See More
+              <FiChevronRight />
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+            {relatedProducts.map((relatedProduct: any) => (
+              <ProductCard key={relatedProduct.id} product={relatedProduct} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
