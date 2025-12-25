@@ -69,6 +69,10 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      throw new AppError('Email and password are required', 400);
+    }
+
     // Find user
     const user = await prisma.user.findUnique({
       where: { email },
@@ -115,6 +119,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       },
     });
   } catch (error) {
+    console.error('Login error:', error);
     next(error);
   }
 };
