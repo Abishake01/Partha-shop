@@ -138,17 +138,50 @@ export default function Products() {
   );
 
   const updateMutation = useMutation(
-    ({ id, data }: { id: string; data: any }) => productApi.updateProduct(id, data),
+    async ({ id, data }: { id: string; data: any }) => {
+      const formDataToSend = new FormData();
+      Object.keys(data).forEach((key) => {
+        if (key === 'images' && Array.isArray(data[key])) {
+          formDataToSend.append('images', JSON.stringify(data[key]));
+        } else if (key === 'specifications') {
+          formDataToSend.append('specifications', JSON.stringify(data[key]));
+        } else if (data[key] !== undefined && data[key] !== null) {
+          formDataToSend.append(key, data[key]);
+        }
+      });
+
+      // Append new uploaded files
+      uploadedFiles.forEach((file) => {
+        formDataToSend.append('images', file);
+      });
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/products/${id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+        },
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update product');
+      }
+
+      return response.json();
+    },
     {
       onSuccess: () => {
         queryClient.invalidateQueries('admin-products');
         setShowForm(false);
         setEditingProduct(null);
         resetForm();
+        setUploadedFiles([]);
+        setImagePreviewUrls([]);
         toast.success('Product updated');
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || 'Failed to update product');
+        toast.error(error.message || 'Failed to update product');
       },
     }
   );
@@ -165,6 +198,51 @@ export default function Products() {
       categoryId: '',
       brandId: '',
     });
+    setUploadedFiles([]);
+    setImagePreviewUrls([]);
+    setSpecKey('');
+    setSpecValue('');
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setUploadedFiles([...uploadedFiles, ...files]);
+    
+    // Create preview URLs
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviewUrls([...imagePreviewUrls, ...newPreviews]);
+  };
+
+  const removeImage = (index: number) => {
+    const newFiles = uploadedFiles.filter((_, i) => i !== index);
+    const newPreviews = imagePreviewUrls.filter((_, i) => i !== index);
+    setUploadedFiles(newFiles);
+    setImagePreviewUrls(newPreviews);
+  };
+
+  const removeUrlImage = (index: number) => {
+    const newImages = formData.images.filter((_, i) => i !== index);
+    setFormData({ ...formData, images: newImages });
+  };
+
+  const addSpecification = () => {
+    if (specKey && specValue) {
+      setFormData({
+        ...formData,
+        specifications: {
+          ...formData.specifications,
+          [specKey]: specValue,
+        },
+      });
+      setSpecKey('');
+      setSpecValue('');
+    }
+  };
+
+  const removeSpecification = (key: string) => {
+    const newSpecs = { ...formData.specifications };
+    delete newSpecs[key];
+    setFormData({ ...formData, specifications: newSpecs });
   };
 
   const handleEdit = (product: any) => {
