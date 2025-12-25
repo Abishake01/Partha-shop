@@ -268,7 +268,7 @@ export default function Products() {
     const submitData = {
       ...formData,
       price: formData.price,
-      discountPrice: formData.discountPrice || undefined,
+      discountPrice: formData.discountPrice || '',
       stock: formData.stock,
     };
 
