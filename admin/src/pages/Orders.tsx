@@ -12,7 +12,7 @@ export default function Orders() {
   const { data: ordersData, isLoading } = useQuery(
     ['admin-orders', statusFilter],
     () => orderApi.getOrders({ status: statusFilter || undefined }),
-    { select: (res) => res.data.data }
+    { select: (res) => res.data.data as { orders: any[]; pagination: any } }
   );
 
   const updateStatusMutation = useMutation(

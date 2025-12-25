@@ -9,7 +9,7 @@ export default function Users() {
   const { data: usersData, isLoading } = useQuery(
     'admin-users',
     () => userApi.getUsers(),
-    { select: (res) => res.data.data }
+    { select: (res) => res.data.data as { users: any[]; pagination: any } }
   );
 
   const toggleBlockMutation = useMutation(

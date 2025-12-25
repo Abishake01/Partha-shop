@@ -32,7 +32,7 @@ export default function Products() {
   const { data: productsData, isLoading } = useQuery(
     'admin-products',
     () => productApi.getProducts({ limit: 50 }),
-    { select: (res) => res.data.data }
+    { select: (res) => res.data.data as { products: any[]; pagination: any } }
   );
 
   const { data: categories } = useQuery('categories', () => categoryApi.getCategories(), {
