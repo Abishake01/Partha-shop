@@ -260,7 +260,28 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
 export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const updateData = req.body;
+    const updateData: any = { ...req.body };
+
+    // Handle file uploads
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+      const uploadPromises = (req.files as Express.Multer.File[]).map((file) =>
+        uploadToCloudinary(file, 'mobileshop/products')
+      );
+      const uploadResults = await Promise.all(uploadPromises);
+      const newImageUrls = uploadResults.map((result) => result.secure_url);
+
+      // Get existing images
+      const existingProduct = await prisma.product.findUnique({ where: { id } });
+      let existingImages: string[] = [];
+      if (existingProduct?.images) {
+        existingImages = typeof existingProduct.images === 'string'
+          ? JSON.parse(existingProduct.images)
+          : existingProduct.images;
+      }
+
+      // Combine existing and new images
+      updateData.images = JSON.stringify([...existingImages, ...newImageUrls]);
+    }
 
     // If name is being updated, regenerate slug
     if (updateData.name) {
@@ -271,7 +292,21 @@ export const updateProduct = async (req: Request, res: Response, next: NextFunct
     if (updateData.price) updateData.price = parseFloat(updateData.price);
     if (updateData.discountPrice) updateData.discountPrice = parseFloat(updateData.discountPrice);
     if (updateData.stock) updateData.stock = parseInt(updateData.stock);
-    if (updateData.images) updateData.images = JSON.stringify(updateData.images);
+    
+    // Handle images from URL input
+    if (updateData.images && !req.files) {
+      const urlImages = typeof updateData.images === 'string' 
+        ? JSON.parse(updateData.images) 
+        : updateData.images;
+      updateData.images = JSON.stringify(urlImages);
+    }
+
+    // Parse specifications
+    if (updateData.specifications) {
+      updateData.specifications = typeof updateData.specifications === 'string'
+        ? JSON.parse(updateData.specifications)
+        : updateData.specifications;
+    }
 
     const product = await prisma.product.update({
       where: { id },
