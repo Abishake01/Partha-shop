@@ -22,6 +22,10 @@ export default function Products() {
     categoryId: '',
     brandId: '',
   });
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [specKey, setSpecKey] = useState('');
+  const [specValue, setSpecValue] = useState('');
   const [newCategory, setNewCategory] = useState({ name: '', description: '', image: '' });
   const [newBrand, setNewBrand] = useState({ name: '', description: '', image: '' });
 
@@ -82,16 +86,53 @@ export default function Products() {
   });
 
   const createMutation = useMutation(
-    (data: typeof formData) => productApi.createProduct(data),
+    async (data: typeof formData) => {
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', data.name);
+      formDataToSend.append('description', data.description);
+      formDataToSend.append('price', data.price);
+      if (data.discountPrice) formDataToSend.append('discountPrice', data.discountPrice);
+      formDataToSend.append('stock', data.stock);
+      formDataToSend.append('categoryId', data.categoryId);
+      formDataToSend.append('brandId', data.brandId);
+      if (data.images.length > 0) {
+        formDataToSend.append('images', JSON.stringify(data.images));
+      }
+      if (Object.keys(data.specifications).length > 0) {
+        formDataToSend.append('specifications', JSON.stringify(data.specifications));
+      }
+      
+      // Append uploaded files
+      uploadedFiles.forEach((file) => {
+        formDataToSend.append('images', file);
+      });
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/products`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+        },
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create product');
+      }
+
+      return response.json();
+    },
     {
       onSuccess: () => {
         queryClient.invalidateQueries('admin-products');
         setShowForm(false);
         resetForm();
+        setUploadedFiles([]);
+        setImagePreviewUrls([]);
         toast.success('Product created');
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || 'Failed to create product');
+        toast.error(error.message || 'Failed to create product');
       },
     }
   );
