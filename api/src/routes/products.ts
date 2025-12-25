@@ -24,6 +24,7 @@ router.post(
   '/',
   authenticate,
   authorize('ADMIN'),
+  uploadMultiple,
   [
     body('name').notEmpty().withMessage('Product name is required'),
     body('description').notEmpty().withMessage('Description is required'),
@@ -40,6 +41,7 @@ router.put(
   '/:id',
   authenticate,
   authorize('ADMIN'),
+  uploadMultiple,
   updateProduct
 );
 
