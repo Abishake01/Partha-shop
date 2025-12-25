@@ -86,7 +86,7 @@ export default function Products() {
   });
 
   const createMutation = useMutation(
-    async (data: { name: string; description: string; price: string; discountPrice: string; stock: string; images: string[]; specifications: Record<string, any>; categoryId: string; brandId: string }) => {
+    async (data: { name: string; description: string; price: string; discountPrice?: string; stock: string; images: string[]; specifications: Record<string, any>; categoryId: string; brandId: string }) => {
       const formDataToSend = new FormData();
       formDataToSend.append('name', data.name);
       formDataToSend.append('description', data.description);
