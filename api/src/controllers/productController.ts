@@ -158,9 +158,29 @@ export const getProductBySlug = async (req: Request, res: Response, next: NextFu
       throw new AppError('Product not found', 404);
     }
 
+    // Get related products (same category, limit 8)
+    const relatedProducts = await prisma.product.findMany({
+      where: {
+        categoryId: product.categoryId,
+        id: { not: product.id },
+        isActive: true,
+      },
+      take: 8,
+      include: {
+        category: true,
+        brand: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
     res.json({
       success: true,
-      data: product,
+      data: {
+        ...product,
+        relatedProducts,
+      },
     });
   } catch (error) {
     next(error);

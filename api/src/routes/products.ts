@@ -10,6 +10,7 @@ import {
 } from '../controllers/productController';
 import { authenticate, authorize } from '../middleware/auth';
 import { validate } from '../middleware/validator';
+import { uploadMultiple } from '../middleware/upload';
 
 const router = Router();
 
