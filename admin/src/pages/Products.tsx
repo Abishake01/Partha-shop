@@ -265,11 +265,16 @@ export default function Products() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const submitData = {
-      ...formData,
+    const submitData: { name: string; description: string; price: string; discountPrice?: string; stock: string; images: string[]; specifications: Record<string, any>; categoryId: string; brandId: string } = {
+      name: formData.name,
+      description: formData.description,
       price: formData.price,
-      discountPrice: formData.discountPrice || '',
+      discountPrice: formData.discountPrice || undefined,
       stock: formData.stock,
+      images: formData.images,
+      specifications: formData.specifications,
+      categoryId: formData.categoryId,
+      brandId: formData.brandId,
     };
 
     if (editingProduct) {
