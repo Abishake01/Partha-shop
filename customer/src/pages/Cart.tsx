@@ -13,10 +13,10 @@ function CartPage() {
   const { setItems, removeItem, updateItemQuantity } = useCartStore();
 
   const { data: cartData, isLoading } = useQuery('cart', () => cartApi.getCart(), {
-    onSuccess: (res) => {
-      setItems(res.data.data);
-    },
     select: (res) => res.data.data,
+    onSuccess: (data) => {
+      setItems(data || []);
+    },
   });
 
   const removeMutation = useMutation((id: string) => cartApi.removeFromCart(id), {
