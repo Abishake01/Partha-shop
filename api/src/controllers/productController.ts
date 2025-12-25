@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import prisma from '../config/database';
 import { AppError } from '../middleware/errorHandler';
 import { ProductFilters, ProductSortOptions, PaginationParams } from '../types';
+import { uploadToCloudinary } from '../utils/cloudinary';
 
 export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {

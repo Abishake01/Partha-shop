@@ -19,6 +19,7 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [zoomPosition, setZoomPosition] = useState<{ x: number; y: number } | null>(null);
   const [showZoom, setShowZoom] = useState(false);
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
 
   const { data: productData, isLoading } = useQuery(
     ['product', slug],
@@ -53,10 +54,19 @@ export default function ProductDetails() {
   };
 
   const handleImageHover = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!showZoom) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    // Calculate lens position, keeping it within bounds
+    const lensSize = 100;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    const lensX = Math.max(0, Math.min(rect.width - lensSize, mouseX - lensSize / 2));
+    const lensY = Math.max(0, Math.min(rect.height - lensSize, mouseY - lensSize / 2));
+    
+    setMousePosition({ x: lensX, y: lensY });
     setZoomPosition({ x, y });
   };
 
@@ -74,58 +84,98 @@ export default function ProductDetails() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Images */}
-        <div>
-          <div
-            className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 mb-4 relative cursor-zoom-in"
-            onMouseEnter={() => setShowZoom(true)}
-            onMouseLeave={() => {
-              setShowZoom(false);
-              setZoomPosition(null);
-            }}
-            onMouseMove={handleImageHover}
-          >
-            <img
-              src={images[selectedImageIndex] || '/placeholder.jpg'}
-              alt={product.name}
-              className="w-full h-full object-cover"
-              style={
-                showZoom && zoomPosition
-                  ? {
-                      transform: `scale(2)`,
-                      transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                      transition: 'transform 0.1s ease-out',
-                    }
-                  : {}
-              }
-            />
-            {showZoom && (
-              <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
-                <FiZoomIn />
-                Hover to zoom
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Images Section - Takes 2 columns */}
+        <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Main Image Container */}
+            <div className="order-2 lg:order-1">
+              <div
+                className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 mb-4 relative cursor-crosshair border border-gray-200"
+                onMouseEnter={() => setShowZoom(true)}
+                onMouseLeave={() => {
+                  setShowZoom(false);
+                  setZoomPosition(null);
+                  setMousePosition(null);
+                }}
+                onMouseMove={handleImageHover}
+              >
+                <img
+                  src={images[selectedImageIndex] || '/placeholder.jpg'}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                />
+                {/* Zoom Lens Indicator */}
+                {showZoom && mousePosition && (
+                  <div
+                    className="absolute border-2 border-primary-500 bg-primary-500 bg-opacity-20 pointer-events-none"
+                    style={{
+                      width: '100px',
+                      height: '100px',
+                      left: `${mousePosition.x - 50}px`,
+                      top: `${mousePosition.y - 50}px`,
+                      transform: 'translate(0, 0)',
+                    }}
+                  />
+                )}
               </div>
-            )}
-          </div>
-          {images.length > 1 && (
-            <div className="flex space-x-2 overflow-x-auto">
-              {images.map((img: string, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImageIndex(index)}
-                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                    selectedImageIndex === index ? 'border-primary-600 ring-2 ring-primary-200' : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <img src={img} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
-                </button>
-              ))}
+              {images.length > 1 && (
+                <div className="flex space-x-2 overflow-x-auto pb-2">
+                  {images.map((img: string, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setSelectedImageIndex(index);
+                        setShowZoom(false);
+                        setZoomPosition(null);
+                        setMousePosition(null);
+                      }}
+                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImageIndex === index ? 'border-primary-600 ring-2 ring-primary-200' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <img src={img} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Zoom Panel - Shows on the right */}
+            <div className="order-1 lg:order-2 hidden lg:block">
+              {showZoom && zoomPosition && images[selectedImageIndex] ? (
+                <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 border border-gray-200 relative">
+                  <img
+                    src={images[selectedImageIndex] || '/placeholder.jpg'}
+                    alt={`${product.name} - Zoom`}
+                    className="w-full h-full object-cover"
+                    style={{
+                      transform: `scale(2.5)`,
+                      transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                      transition: 'none',
+                    }}
+                    draggable={false}
+                  />
+                  <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                    <FiZoomIn />
+                    Zoom View
+                  </div>
+                </div>
+              ) : (
+                <div className="aspect-square w-full rounded-lg bg-gray-50 border-2 border-dashed border-gray-300 flex items-center justify-center">
+                  <div className="text-center text-gray-400">
+                    <FiZoomIn className="w-12 h-12 mx-auto mb-2" />
+                    <p className="text-sm">Hover over image to zoom</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Product Info */}
-        <div>
+        {/* Product Info - Takes 1 column */}
+        <div className="lg:col-span-1">
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
           
           <div className="flex items-center space-x-4 mb-4">
