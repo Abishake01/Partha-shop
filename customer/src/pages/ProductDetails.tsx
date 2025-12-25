@@ -109,13 +109,12 @@ export default function ProductDetails() {
                 {/* Zoom Lens Indicator */}
                 {showZoom && mousePosition && (
                   <div
-                    className="absolute border-2 border-primary-500 bg-primary-500 bg-opacity-20 pointer-events-none"
+                    className="absolute border-2 border-primary-500 bg-primary-500 bg-opacity-20 pointer-events-none z-10"
                     style={{
                       width: '100px',
                       height: '100px',
-                      left: `${mousePosition.x - 50}px`,
-                      top: `${mousePosition.y - 50}px`,
-                      transform: 'translate(0, 0)',
+                      left: `${mousePosition.x}px`,
+                      top: `${mousePosition.y}px`,
                     }}
                   />
                 )}
