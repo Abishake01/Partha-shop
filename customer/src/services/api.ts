@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ApiResponse, AuthResponse, PaginatedResponse, Product, CartItem, Order, Address, WishlistItem, User } from '../types';
+import { ApiResponse, AuthResponse, PaginatedResponse, Product, CartItem, Order, Address, WishlistItem, User, Category, Brand } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
