@@ -4,7 +4,7 @@
 
 Your database connection is being blocked because Hostinger restricts MySQL access to their servers only. The error shows:
 ```
-Access denied for user 'u304535605_parthi'@'2401:4900:...' (using password: YES)
+Access denied for user 'username'@'your_ip_address' (using password: YES)
 ```
 
 This means your local IP address is not allowed to connect.
@@ -19,7 +19,7 @@ This means your local IP address is not allowed to connect.
 
 ### Step 2: Enable Remote MySQL
 
-1. Find your database: `u304535605_Mobileshop`
+1. Find your database in the list
 2. Look for **"Remote MySQL"** or **"Access Hosts"** option
 3. Click on it
 4. Add your current IP address OR
@@ -51,7 +51,7 @@ node scripts/test_database.js
 
 Since phpMyAdmin works, you can verify your admin user:
 
-1. Go to: https://auth-db2109.hstgr.io/index.php?db=u304535605_Mobileshop
+1. Go to your phpMyAdmin URL
 2. Click on `users` table
 3. Check if admin user exists:
    ```sql

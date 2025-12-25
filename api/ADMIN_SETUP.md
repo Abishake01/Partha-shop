@@ -43,7 +43,7 @@ Since the database connection might have issues, the easiest way is to register 
 
 3. **Update user role to ADMIN in phpMyAdmin:**
    - Go to phpMyAdmin
-   - Select database `u304535605_Mobileshop`
+   - Select your database
    - Go to `users` table
    - Find the user with email `admin@mobileshop.com`
    - Edit the `role` field and change it from `USER` to `ADMIN`

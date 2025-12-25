@@ -33,7 +33,7 @@
      ```
 
 3. **Update role to ADMIN in phpMyAdmin:**
-   - Go to: https://auth-db2109.hstgr.io/index.php?db=u304535605_Mobileshop
+   - Go to your phpMyAdmin URL
    - Click on `users` table
    - Find the row with email `admin@mobileshop.com`
    - Click "Edit"

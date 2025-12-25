@@ -11,10 +11,8 @@ The database connection is failing with authentication error. This is likely due
 
 ### Solution 1: Verify Credentials in phpMyAdmin
 
-1. Go to: https://auth-db2109.hstgr.io/index.php?db=u304535605_Mobileshop
-2. Try logging in with:
-   - Username: `u304535605_parthi`
-   - Password: `G9!nLgd7:`
+1. Go to your phpMyAdmin URL
+2. Try logging in with your database credentials
 3. If this works, the credentials are correct
 
 ### Solution 2: Check IP Restrictions
@@ -29,24 +27,25 @@ Hostinger databases might have IP restrictions. Check:
 
 Update your `.env` file and try these formats:
 
-**Format 1: URL-encoded password**
+**Format 1: URL-encoded password (if password has special characters)**
 ```env
-DATABASE_URL="mysql://u304535605_parthi:G9%21nLgd7%3A@auth-db2109.hstgr.io:3306/u304535605_Mobileshop"
+DATABASE_URL="mysql://username:encoded_password@host:port/database"
+# Example: mysql://user:pass%21word@host:3306/db
 ```
 
-**Format 2: Raw password (current)**
+**Format 2: Raw password**
 ```env
-DATABASE_URL="mysql://u304535605_parthi:G9!nLgd7:@auth-db2109.hstgr.io:3306/u304535605_Mobileshop"
+DATABASE_URL="mysql://username:password@host:port/database"
 ```
 
 **Format 3: Separate connection parameters (if using mysql2 directly)**
 ```javascript
 {
-  host: 'auth-db2109.hstgr.io',
+  host: 'your_host',
   port: 3306,
-  user: 'u304535605_parthi',
-  password: 'G9!nLgd7:',
-  database: 'u304535605_Mobileshop'
+  user: 'your_username',
+  password: 'your_password',
+  database: 'your_database'
 }
 ```
 

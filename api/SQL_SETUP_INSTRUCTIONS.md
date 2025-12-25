@@ -10,7 +10,7 @@
 
 ### Option 1: Tables Already Created (You just need admin user)
 
-1. Open phpMyAdmin: https://auth-db2109.hstgr.io/index.php?db=u304535605_Mobileshop
+1. Open phpMyAdmin: Go to your phpMyAdmin URL
 2. Click **SQL** tab
 3. Copy and paste this:
 
@@ -45,7 +45,7 @@ INSERT INTO `users` (
 
 ### Option 2: Starting Fresh (Create tables + admin)
 
-1. Open phpMyAdmin: https://auth-db2109.hstgr.io/index.php?db=u304535605_Mobileshop
+1. Open phpMyAdmin: Go to your phpMyAdmin URL
 2. Click **SQL** tab
 3. Copy the **entire contents** of `api/prisma/complete_setup.sql`
 4. Paste and click **Go**

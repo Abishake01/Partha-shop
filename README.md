@@ -49,16 +49,13 @@ Partha/
 cd api
 npm install
 
-# Create .env file with the following variables:
-# DATABASE_URL="mysql://u304535605_parthi:G9!nLgd7:@auth-db2109.hstgr.io:3306/u304535605_Mobileshop"
-# JWT_SECRET=your_jwt_secret_key
-# JWT_REFRESH_SECRET=your_refresh_secret_key
-# CLOUDINARY_CLOUD_NAME=your_cloud_name
-# CLOUDINARY_API_KEY=your_api_key
-# CLOUDINARY_API_SECRET=your_api_secret
-# PORT=5000
-# CUSTOMER_URL=http://localhost:5173
-# ADMIN_URL=http://localhost:5174
+# Create .env file (copy from env.template):
+# cp env.template .env
+# Then edit .env and add your actual credentials:
+# - DATABASE_URL with your MySQL connection string
+# - JWT_SECRET and JWT_REFRESH_SECRET (generate strong secrets)
+# - Cloudinary credentials from your Cloudinary dashboard
+# - PORT, CUSTOMER_URL, ADMIN_URL
 
 # Generate Prisma Client
 npm run prisma:generate
@@ -102,17 +99,17 @@ The admin dashboard will run on `http://localhost:5174`
 
 ## Database Configuration
 
-The project uses MySQL database hosted on Hostinger:
-
-- **Host**: `auth-db2109.hstgr.io`
-- **Database**: `u304535605_Mobileshop`
-- **Username**: `u304535605_parthi`
-- **Password**: `G9!nLgd7:`
+The project uses MySQL database. Configure your connection in the `.env` file:
 
 The connection string format:
 ```
-DATABASE_URL="mysql://u304535605_parthi:G9!nLgd7:@auth-db2109.hstgr.io:3306/u304535605_Mobileshop"
+DATABASE_URL="mysql://username:password@host:port/database"
 ```
+
+**Note:** If your password contains special characters, URL-encode them:
+- `!` becomes `%21`
+- `:` becomes `%3A`
+- etc.
 
 ## Features
 

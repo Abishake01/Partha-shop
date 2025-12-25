@@ -2,9 +2,9 @@
 
 ## Option 1: Using phpMyAdmin (Recommended if Prisma migration fails)
 
-1. **Open phpMyAdmin**: Go to https://auth-db2109.hstgr.io/index.php?db=u304535605_Mobileshop
+1. **Open phpMyAdmin**: Go to your phpMyAdmin URL
 
-2. **Select your database**: Make sure `u304535605_Mobileshop` is selected
+2. **Select your database**: Make sure your database is selected
 
 3. **Open SQL tab**: Click on the "SQL" tab in phpMyAdmin
 
@@ -30,15 +30,12 @@
 If you want to use Prisma migrations, verify your database credentials:
 
 1. **Check credentials in Hostinger**:
-   - Database name: `u304535605_Mobileshop`
-   - Username: `u304535605_parthi`
-   - Password: `G9!nLgd7:`
-   - Host: `auth-db2109.hstgr.io`
+   - Verify your database name, username, password, and host
 
 2. **Test connection manually**:
    ```bash
-   mysql -h auth-db2109.hstgr.io -u u304535605_parthi -p u304535605_Mobileshop
-   # Enter password: G9!nLgd7:
+   mysql -h your_host -u your_username -p your_database
+   # Enter your password when prompted
    ```
 
 3. **If connection works, try Prisma again**:
