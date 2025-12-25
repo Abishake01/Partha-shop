@@ -61,7 +61,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm">
-          <p>&copy; 2024 MobileShop. All rights reserved.</p>
+          <p>&copy; 2026 MobileShop. All rights reserved.</p>
         </div>
       </div>
     </footer>

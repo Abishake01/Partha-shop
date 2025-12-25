@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { productApi, categoryApi, brandApi } from '../services/api';
 import toast from 'react-hot-toast';
-import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlus, FiX } from 'react-icons/fi';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function Products() {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [showBrandForm, setShowBrandForm] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -20,6 +22,8 @@ export default function Products() {
     categoryId: '',
     brandId: '',
   });
+  const [newCategory, setNewCategory] = useState({ name: '', description: '', image: '' });
+  const [newBrand, setNewBrand] = useState({ name: '', description: '', image: '' });
 
   const { data: productsData, isLoading } = useQuery(
     'admin-products',
