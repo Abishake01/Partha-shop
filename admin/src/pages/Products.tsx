@@ -307,7 +307,7 @@ export default function Products() {
             <h2 className="text-2xl font-bold mb-4 pr-8">
               {editingProduct ? 'Edit Product' : 'Add Product'}
             </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
                 <input
