@@ -76,8 +76,15 @@ export const dashboardApi = {
 export const productApi = {
   getProducts: (params?: any) => api.get<PaginatedResponse<Product>>('/products', { params }),
   getProduct: (id: string) => api.get<ApiResponse<Product>>(`/products/${id}`),
-  createProduct: (data: any) => api.post<ApiResponse<Product>>('/products', data),
-  updateProduct: (id: string, data: any) => api.put<ApiResponse<Product>>(`/products/${id}`, data),
+  // Use multipart/form-data when sending FormData
+  createProduct: (data: any) =>
+    api.post<ApiResponse<Product>>('/products', data, {
+      headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
+    }),
+  updateProduct: (id: string, data: any) =>
+    api.put<ApiResponse<Product>>(`/products/${id}`, data, {
+      headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
+    }),
   deleteProduct: (id: string) => api.delete(`/products/${id}`),
 };
 

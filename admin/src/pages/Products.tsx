@@ -107,20 +107,8 @@ export default function Products() {
         formDataToSend.append('images', file);
       });
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/products`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
-        },
-        body: formDataToSend,
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to create product');
-      }
-
-      return response.json();
+      const response = await productApi.createProduct(formDataToSend);
+      return response.data;
     },
     {
       onSuccess: () => {
@@ -155,20 +143,8 @@ export default function Products() {
         formDataToSend.append('images', file);
       });
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/products/${id}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
-        },
-        body: formDataToSend,
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to update product');
-      }
-
-      return response.json();
+      const response = await productApi.updateProduct(id, formDataToSend);
+      return response.data;
     },
     {
       onSuccess: () => {
