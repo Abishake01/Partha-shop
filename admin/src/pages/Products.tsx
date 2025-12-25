@@ -258,6 +258,8 @@ export default function Products() {
       categoryId: product.categoryId,
       brandId: product.brandId,
     });
+    setUploadedFiles([]);
+    setImagePreviewUrls([]);
     setShowForm(true);
   };
 
