@@ -424,22 +424,123 @@ export default function Products() {
                   </select>
                 </div>
               </div>
+              {/* Images Section */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image URLs (one per line)
+                  Product Images
                 </label>
-                <textarea
-                  value={formData.images.join('\n')}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      images: e.target.value.split('\n').filter((url) => url.trim()),
-                    })
-                  }
-                  className="input"
-                  rows={3}
-                  placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
-                />
+                
+                {/* Upload Files */}
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-600 mb-2">Upload Images</label>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="input"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">You can select multiple images (max 10)</p>
+                </div>
+
+                {/* Image Previews */}
+                {(imagePreviewUrls.length > 0 || formData.images.length > 0) && (
+                  <div className="grid grid-cols-4 gap-2 mb-4">
+                    {imagePreviewUrls.map((preview, index) => (
+                      <div key={`preview-${index}`} className="relative group">
+                        <img
+                          src={preview}
+                          alt={`Preview ${index + 1}`}
+                          className="w-full h-24 object-cover rounded border border-gray-200"
+                        />
+                        <button
+                          onClick={() => removeImage(index)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <FiX className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                    {formData.images.map((url, index) => (
+                      <div key={`url-${index}`} className="relative group">
+                        <img
+                          src={url}
+                          alt={`Image ${index + 1}`}
+                          className="w-full h-24 object-cover rounded border border-gray-200"
+                        />
+                        <button
+                          onClick={() => removeUrlImage(index)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <FiX className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* URL Input */}
+                <div>
+                  <label className="block text-sm text-gray-600 mb-2">Or Add Image URLs (one per line)</label>
+                  <textarea
+                    value={formData.images.join('\n')}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        images: e.target.value.split('\n').filter((url) => url.trim()),
+                      })
+                    }
+                    className="input"
+                    rows={2}
+                    placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+                  />
+                </div>
+              </div>
+
+              {/* Specifications Section */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Specifications
+                </label>
+                <div className="space-y-2 mb-4">
+                  {Object.entries(formData.specifications).map(([key, value]) => (
+                    <div key={key} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex-1">
+                        <span className="font-medium text-sm">{key}:</span>
+                        <span className="text-sm text-gray-600 ml-2">{String(value)}</span>
+                      </div>
+                      <button
+                        onClick={() => removeSpecification(key)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <FiX />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Specification name (e.g., RAM)"
+                    value={specKey}
+                    onChange={(e) => setSpecKey(e.target.value)}
+                    className="input flex-1"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Value (e.g., 8GB)"
+                    value={specValue}
+                    onChange={(e) => setSpecValue(e.target.value)}
+                    className="input flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={addSpecification}
+                    className="btn-secondary whitespace-nowrap"
+                  >
+                    Add Spec
+                  </button>
+                </div>
               </div>
               <div className="flex space-x-4">
                 <button type="submit" className="btn-primary" disabled={createMutation.isLoading || updateMutation.isLoading}>
