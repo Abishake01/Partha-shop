@@ -37,7 +37,7 @@ export default function ProductDetails() {
 
     try {
       const response = await cartApi.addToCart({
-        productId: productData!.id,
+        productId: product!.id,
         quantity,
       });
       addItem(response.data.data);
@@ -47,16 +47,24 @@ export default function ProductDetails() {
     }
   };
 
-  if (isLoading) return <LoadingSpinner />;
-  if (!productData) return <div>Product not found</div>;
+  const handleImageHover = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!showZoom) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPosition({ x, y });
+  };
 
-  const images = typeof productData.images === 'string' 
-    ? JSON.parse(productData.images) 
-    : productData.images || [];
-  const price = productData.discountPrice || productData.price;
-  const originalPrice = productData.discountPrice ? productData.price : null;
-  const discount = productData.discountPrice
-    ? ((productData.price - productData.discountPrice) / productData.price) * 100
+  if (isLoading) return <LoadingSpinner />;
+  if (!product) return <div>Product not found</div>;
+
+  const images = typeof product.images === 'string' 
+    ? JSON.parse(product.images) 
+    : product.images || [];
+  const price = product.discountPrice || product.price;
+  const originalPrice = product.discountPrice ? product.price : null;
+  const discount = product.discountPrice
+    ? ((product.price - product.discountPrice) / product.price) * 100
     : 0;
 
   return (
@@ -64,12 +72,35 @@ export default function ProductDetails() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Images */}
         <div>
-          <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 mb-4">
+          <div
+            className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 mb-4 relative cursor-zoom-in"
+            onMouseEnter={() => setShowZoom(true)}
+            onMouseLeave={() => {
+              setShowZoom(false);
+              setZoomPosition(null);
+            }}
+            onMouseMove={handleImageHover}
+          >
             <img
               src={images[selectedImageIndex] || '/placeholder.jpg'}
-              alt={productData.name}
+              alt={product.name}
               className="w-full h-full object-cover"
+              style={
+                showZoom && zoomPosition
+                  ? {
+                      transform: `scale(2)`,
+                      transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                      transition: 'transform 0.1s ease-out',
+                    }
+                  : {}
+              }
             />
+            {showZoom && (
+              <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                <FiZoomIn />
+                Hover to zoom
+              </div>
+            )}
           </div>
           {images.length > 1 && (
             <div className="flex space-x-2 overflow-x-auto">
@@ -77,11 +108,11 @@ export default function ProductDetails() {
                 <button
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}
-                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                    selectedImageIndex === index ? 'border-primary-600' : 'border-gray-200'
+                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                    selectedImageIndex === index ? 'border-primary-600 ring-2 ring-primary-200' : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <img src={img} alt={`${productData.name} ${index + 1}`} className="w-full h-full object-cover" />
+                  <img src={img} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -90,14 +121,14 @@ export default function ProductDetails() {
 
         {/* Product Info */}
         <div>
-          <h1 className="text-3xl font-bold mb-4">{productData.name}</h1>
+          <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
           
           <div className="flex items-center space-x-4 mb-4">
-            {productData.rating > 0 && (
+            {product.rating > 0 && (
               <div className="flex items-center space-x-1">
                 <FiStar className="text-yellow-400 fill-yellow-400" />
-                <span className="font-semibold">{parseFloat(productData.rating.toString()).toFixed(1)}</span>
-                <span className="text-gray-500">({productData.reviewCount} reviews)</span>
+                <span className="font-semibold">{parseFloat(product.rating.toString()).toFixed(1)}</span>
+                <span className="text-gray-500">({product.reviewCount} reviews)</span>
               </div>
             )}
           </div>
