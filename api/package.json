@@ -11,7 +11,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "test:db": "node scripts/test_database.js",
-    "test:admin": "node scripts/verify_admin.js"
+    "test:admin": "node scripts/verify_admin.js",
+    "check:env": "node scripts/check_env.js"
   },
   "keywords": [],
   "author": "",
