@@ -267,10 +267,9 @@ export default function Products() {
     e.preventDefault();
     const submitData = {
       ...formData,
-      price: parseFloat(formData.price),
-      discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
-      stock: parseInt(formData.stock),
-      images: formData.images,
+      price: formData.price,
+      discountPrice: formData.discountPrice || undefined,
+      stock: formData.stock,
     };
 
     if (editingProduct) {
