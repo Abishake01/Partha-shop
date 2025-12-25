@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { productApi, cartApi } from '../services/api';
@@ -6,21 +6,28 @@ import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { FiShoppingCart, FiHeart, FiStar, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiShoppingCart, FiHeart, FiStar, FiChevronLeft, FiChevronRight, FiZoomIn } from 'react-icons/fi';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import ProductCard from '../components/products/ProductCard';
 
 export default function ProductDetails() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const { addItem } = useCartStore();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [zoomPosition, setZoomPosition] = useState<{ x: number; y: number } | null>(null);
+  const [showZoom, setShowZoom] = useState(false);
 
   const { data: productData, isLoading } = useQuery(
     ['product', slug],
     () => productApi.getProductBySlug(slug!),
     { enabled: !!slug, select: (res) => res.data.data }
   );
+
+  const product = productData?.product || productData;
+  const relatedProducts = productData?.relatedProducts || [];
 
   const handleAddToCart = async () => {
     if (!isAuthenticated()) {
