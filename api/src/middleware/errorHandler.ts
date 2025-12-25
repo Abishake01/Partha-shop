@@ -25,11 +25,22 @@ export const errorHandler = (
     });
   }
 
-  console.error('Error:', err);
+  // Log full error details for debugging
+  console.error('Error Details:', {
+    message: err.message,
+    stack: err.stack,
+    name: err.name,
+    path: req.path,
+    method: req.method,
+  });
+
   return res.status(500).json({
     success: false,
     message: 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    ...(process.env.NODE_ENV === 'development' && { 
+      error: err.message,
+      stack: err.stack 
+    }),
   });
 };
 
