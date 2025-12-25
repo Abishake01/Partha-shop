@@ -265,7 +265,7 @@ export default function Products() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const submitData: { name: string; description: string; price: string; discountPrice?: string; stock: string; images: string[]; specifications: Record<string, any>; categoryId: string; brandId: string } = {
+    const submitData = {
       name: formData.name,
       description: formData.description,
       price: formData.price,
@@ -275,7 +275,7 @@ export default function Products() {
       specifications: formData.specifications,
       categoryId: formData.categoryId,
       brandId: formData.brandId,
-    };
+    } as { name: string; description: string; price: string; discountPrice?: string; stock: string; images: string[]; specifications: Record<string, any>; categoryId: string; brandId: string };
 
     if (editingProduct) {
       updateMutation.mutate({ id: editingProduct.id, data: submitData });

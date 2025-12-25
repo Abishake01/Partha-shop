@@ -118,8 +118,7 @@ export interface ApiResponse<T> {
 
 export interface PaginatedResponse<T> {
   success: boolean;
-  data: {
-    [key: string]: any;
+  data: Record<string, any> & {
     pagination: {
       page: number;
       limit: number;
