@@ -1,5 +1,14 @@
 import { UserRole, OrderStatus } from '@prisma/client';
 
+declare global {
+  namespace Express {
+    interface Request {
+      id?: string;
+      user?: JWTPayload;
+    }
+  }
+}
+
 export interface JWTPayload {
   userId: string;
   email: string;
