@@ -27,7 +27,12 @@ model User {
   orders    Order[]
   cartItems CartItem[]
   wishlist  WishlistItem[]
+  reviews   Review[]
 
+  @@index([email])
+  @@index([role])
+  @@index([isBlocked])
+  @@index([createdAt])
   @@map("users")
 }
 
@@ -93,6 +98,12 @@ model Product {
   @@index([categoryId])
   @@index([brandId])
   @@index([slug])
+  @@index([isActive])
+  @@index([stock])
+  @@index([price])
+  @@index([rating])
+  @@index([createdAt])
+  @@fulltext([name, description])
   @@map("products")
 }
 
@@ -152,6 +163,8 @@ model Order {
   @@index([userId])
   @@index([orderNumber])
   @@index([status])
+  @@index([createdAt])
+  @@index([paymentMethod])
   @@map("orders")
 }
 
@@ -197,14 +210,19 @@ model Review {
   productId String   @map("product_id")
   userId    String   @map("user_id")
   rating    Int      // 1-5
+  title     String   @default("")
   comment   String?  @db.Text
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([productId, userId])
   @@index([productId])
+  @@index([userId])
+  @@index([rating])
+  @@index([createdAt])
   @@map("reviews")
 }
 
